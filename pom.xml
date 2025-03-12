@@ -24,6 +24,7 @@
 	<modules>
 		<module>catalog-service</module>
         <module>info-service</module>
+        <module>rating-service</module>
     </modules>
 	<scm>
 		<connection/>
