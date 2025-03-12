@@ -23,7 +23,8 @@
 	</developers>
 	<modules>
 		<module>catalog-service</module>
-	</modules>
+        <module>info-service</module>
+    </modules>
 	<scm>
 		<connection/>
 		<developerConnection/>
