@@ -18,12 +18,13 @@ public class RatingResource {
     }
 
     @GetMapping("/users/{userId}")
-    public List<Rating> getUserRatings(@PathVariable Long userId) {
+    public UserRating getUserRatings(@PathVariable Long userId) {
         // Simulated rating retrieval from a database
-        return Arrays.asList(
+        List<Rating> ratings = Arrays.asList(
                 new Rating(123L, 4.5),
                 new Rating(456L, 3.8),
                 new Rating(789L, 4.2)
         );
+        return new UserRating(userId, ratings);
     }
 }

@@ -34,3 +34,24 @@ On the other hand, **technology** refers to tools or frameworks that implement t
 ####  Practical Definition
 **"In WebFlux, when making an API call like `webClient.get().retrieve().bodyToMono(Movie.class)`, it returns a `Mono<Movie>`, meaning the movie data will be available asynchronously when subscribed to
 and can be used later once available."**
+
+### Why you should avoid returning lists in APIs?
+Returning a raw list in a REST API response lacks metadata, making it harder to include pagination, status codes, or error handling. Wrapping the list in an object ensures consistency, scalability, and flexibility for future enhancements.
+Imagine you want to add a new property, like `totalItems`, to track how many items are in the list. If you return just a list, there's no easy way to include this property:
+```json
+[
+  { "id": 1, "name": "Item 1" },
+  { "id": 2, "name": "Item 2" }
+]
+```
+**Recommended**: Instead, the response can be wrapped in an object that includes metadata along with the data:
+```json
+{
+  "status": "success",
+  "data": [
+    { "id": 1, "name": "Item 1" },
+    { "id": 2, "name": "Item 2" }
+  ],
+  "totalItems": 2
+}
+```
