@@ -1,5 +1,6 @@
 package io.javabrains.catalog;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -11,9 +12,10 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/catalog")
 public class MovieCatalogResource {
+    @Autowired
+    private RestTemplate restTemplate;
     @GetMapping("/{userId}")
     public List<CatalogItem> getItems(@PathVariable("userId") String userId){
-
         // Get Ratings (hardcoding ratings data for now)
         List<Rating> ratings = Arrays.asList(
                 new Rating(123L, 4.5),
@@ -22,8 +24,6 @@ public class MovieCatalogResource {
         );
 
         // Get Movies using the RestTemplate
-        RestTemplate restTemplate = new RestTemplate();
-
         return ratings.stream().map(rating -> {
             Movie movie = restTemplate.getForObject("http://localhost:8082/movies/" + rating.getMovieId(), Movie.class);
             return new CatalogItem(movie.getName(), "Description", rating.getRatingValue());
