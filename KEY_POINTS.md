@@ -92,3 +92,15 @@ In other words, `Service Discovery` is like a phone book guy which is maintainin
 providing the entries into the phone book. Whoever needs to make a call looks up the phone book and gets the address
 
 `Remember : Spring Cloud uses the Client Side Service Discovery`
+
+### What's Eureka Server?
+Eureka Server is like the “address book” for microservices in Spring Cloud applications. Imagine you're building an online food delivery app with multiple services like:
+- Order Service: Handles placing and tracking food orders.
+- Restaurant Service: Manages restaurant menus and availability.
+- Delivery Service: Coordinates with delivery agents.
+
+Each service runs independently, but they need to talk to each other. Instead of hardcoding their locations (like IP addresses or URLs), which is unreliable in a dynamic environment, they can use Eureka Server to discover each other.
+
+How it Works:
+- Service Registration: All microservices (Order, Restaurant, Delivery) register themselves with Eureka Server when they start up. Eureka Server saves their details (hostnames, ports, etc.).
+- Service Discovery: When one service (e.g., Order Service) wants to talk to another (e.g., Delivery Service), it asks Eureka Server for the latest location instead of relying on a hardcoded address.
