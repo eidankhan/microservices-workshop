@@ -104,3 +104,44 @@ Each service runs independently, but they need to talk to each other. Instead of
 How it Works:
 - Service Registration: All microservices (Order, Restaurant, Delivery) register themselves with Eureka Server when they start up. Eureka Server saves their details (hostnames, ports, etc.).
 - Service Discovery: When one service (e.g., Order Service) wants to talk to another (e.g., Delivery Service), it asks Eureka Server for the latest location instead of relying on a hardcoded address.
+
+## ⚠️ Fault Tolerance in Spring Microservices
+
+Fault tolerance = Keeping your system **alive and responsive**, even when parts of it fail.
+
+### 🧰 Key Tools (with Resilience4j):
+
+- **Circuit Breaker** 🧯  
+  Stops calling a failing service to avoid making things worse. Falls back to defaults.
+
+- **Retry** 🔁  
+  Tries a few times before giving up. Useful for temporary network hiccups.
+
+- **Rate Limiter** 🚦  
+  Controls traffic to prevent service overload.
+
+- **Bulkhead** 🛡️  
+  Isolates resources (like thread pools) to prevent a failure from sinking the entire system.
+
+> 💡 Think of it as airbags for your microservices!
+
+---
+
+## 🧭 When Eureka Server Goes Down
+
+### 😱 What breaks?
+- ❌ New services can't register
+- ❌ New services can't discover others (if not cached)
+- ❌ No health checks or heartbeats
+
+### 😌 What still works?
+- ✅ Already-discovered services can still talk using cached registry
+- ✅ Temporary survival thanks to local cache
+
+### 🛠️ How to reduce impact:
+- 🔁 Use **multiple Eureka servers** for high availability
+- 🧠 Leverage **self-preservation mode** to avoid accidental instance removal
+- 💾 Keep **registry fetch interval** short for fresher local cache
+
+> 💬 Eureka down ≠ total blackout — just don't stay in single-server mode!
+
