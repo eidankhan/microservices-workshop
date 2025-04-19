@@ -1,4 +1,4 @@
-package io.javabrains.rating;
+package io.javabrains.server;
 
 public class Rating {
     private Long movieId;
