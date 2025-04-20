@@ -145,3 +145,76 @@ Fault tolerance = Keeping your system **alive and responsive**, even when parts 
 
 > 💬 Eureka down ≠ total blackout — just don't stay in single-server mode!
 
+> # 🚀 Spring Boot Microservices - Fault Tolerance & Resilience (Level 2)
+
+## 🎯 Workshop Focus
+
+Welcome to **Level 2** of microservices with Spring Boot — where we focus on making systems **fault-tolerant** and **resilient**.
+
+> "Before you learn a tool, understand the **problem** it solves."
+
+This session is all about the **"why"** behind resilience, not just the "how."
+
+---
+
+## 🔍 Challenges with Availability
+
+Microservices bring scalability and modularity, but also create **fragile interdependencies**.
+
+### 🧠 What can go wrong?
+- One service failing might **impact many others**
+- Delays in one part may **slow down the entire system**
+- **Unexpected downtime** or **network glitches** are inevitable
+
+> Real-world example:  
+> In a ride-hailing app, if the location service is down, should the app crash — or still let users browse?
+
+---
+
+## ⚠️ Why Do We Need Fault Tolerance?
+
+Microservices need to handle failure **gracefully** to:
+- Improve **system availability**
+- Prevent **cascading failures**
+- Maintain a **good user experience** even when things break
+
+### Key Insight:
+> You can't **prevent** all failures, but you can design systems that **recover from them**.
+
+---
+
+## 🧠 Resilience — It's a Mindset
+
+This workshop emphasizes:
+- Understanding **core resilience principles**
+- Concepts that are **framework-agnostic**
+- Patterns that remain **relevant**, whether you're using Spring Boot, Node.js, or Go
+
+---
+
+## 📦 Tech Stack (Used in this Workshop)
+
+We'll be using:
+- **Spring Boot** for microservices
+- **Hystrix** (as an example library — focus is on concept, not the tool)
+
+But remember — the goal is to **understand resilience**, not just implement Hystrix.
+
+---
+
+### What is Fault Tolerance?
+> Given an application, if there's a fault; what is the impact of that fault? How much `Tolerance` does the system
+have for a specific fault? Let's say, if one microservices instances were to go down, what's gonna to happen with your microservices'
+application? Is your whole microservices application go down? Or is it a part of that application functionality that goes down?
+Or we have some way of handling failures, so that there's no perceived impact at all on our microservices' application?
+
+> So, in nutshell, what tolerance your system has for a particular fault is what's called `Fault Tolerance`
+
+### What is Fault Resilience?
+> `Resilience` is basically how many faults a system can tolerate and that indicates how resilient the system is. The first one you're looking at single fault 
+> and saying, how much system can tolerate a single fault? And `Resilience` is how many faults can system tolerate before its brought down to its knees?
+> `A part of resilience is how many times a system can bounce back  from a fault?`
+
+> So, very similar concepts but slight differences. `You can technically have a system that's very fault tolerant but it's not resilient
+> but its hard because most of the time these two go to gather and it's good to focus on the both.`
+
