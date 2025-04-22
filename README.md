@@ -471,3 +471,78 @@ This is especially problematic in synchronous communication (like REST).
 - This leads to a **system-wide slowdown**, even when only one service is slow.
 
 ---
+
+> # 🛠️ Using Timeouts to Fix Slow Microservices
+---
+
+## ❓ Problem Recap: Threads Get Stuck
+
+When a **microservice is slow**, it holds up a **thread** in the server.
+If too many threads are held:
+- Thread pool fills up.
+- Fast services also get blocked.
+- The app becomes slow for **everyone**.
+
+---
+
+## ✅ Timeout: The Elegant Solution
+
+> "Hey man, you're taking too long… you're done!"  
+> — That’s basically what a **timeout** does.
+
+A **timeout**:
+- Sets a **max time limit** for a response.
+- If the service doesn't respond in time, the request is **terminated**.
+- The thread is **freed up** to serve other requests.
+
+---
+
+## 🧠 Why Timeouts Work
+
+With timeouts:
+- Slow services don’t **hog threads forever**.
+- **Fast services** continue working.
+- System stays **responsive** even if one service is sluggish.
+
+---
+
+## 🔁 Why “More Threads” Isn’t Enough
+
+Someone might suggest:
+> “Just increase the Tomcat thread pool size.”
+
+🚨 That’s a **temporary patch**:
+- Works only **until** traffic increases again.
+- You’ll eventually need more hardware.
+- It **doesn’t solve the root problem**.
+
+Also, real-world user behavior:
+- When apps are slow, people hit **refresh repeatedly**.
+- That creates even **more concurrent requests**.
+- Result? The system crashes faster.
+
+---
+
+## 🖼️ Visual Recap: Using Timeouts
+
+![Alt Text](/images/timeouts.png)
+
+In the diagram:
+- Each request gets a thread.
+- If a thread takes too long, it **times out**.
+- That thread is now **free to serve** another request.
+
+---
+
+## 🧪 Implementation in Spring Boot
+
+We are using `RestTemplate` for making API calls.
+
+By default:
+- No timeouts are set.
+- The thread **waits forever** for a response 😬
+
+You should:
+- Set a **timeout** on the `RestTemplate`.
+- If the API call exceeds the time, it returns an error.
+- Your app can **fail fast** and move on.
