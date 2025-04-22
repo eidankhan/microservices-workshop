@@ -318,3 +318,82 @@ This is a **basic**, yet powerful step in making your microservices **resilient 
 
 ---
 
+> # 🐢 What If a Microservice is Slow?
+---
+
+## 🧠 Common Assumption
+
+> "If a microservice is **slow**, it’s not a big deal. At least it’s not down, right?"
+
+Turns out... that’s a **dangerous misconception**.
+
+![Alt text](images/one-service-is-slow.png)
+
+---
+
+## ⚠️ Problem Scenario: The Hidden Danger
+
+Let's visualize a chain of services:
+
+- **Movie Catalog Service**  
+  → Calls → **Movie Info Service**  
+  → Then Calls → **Rating Data Service**
+
+Now imagine **Movie Info Service becomes slow** (not down, just delayed).  
+What could possibly go wrong?
+
+---
+
+## 💥 Cascade of Slowness
+
+Even if only one service (like Movie Info) is slow:
+- Entire dependent APIs (like Catalog) become slow.
+- ❗ But here's the surprising part: **even unrelated APIs can become slow.**
+
+### 🎯 Example:
+
+- `GET /catalog/user/123` → Slowed down (makes sense, depends on Movie Info)
+- `GET /ratings/user/123` → ALSO slowed down ❓ (even though it only talks to Ratings Data Service)
+
+---
+
+## ❓ Why Does This Happen?
+
+> The real culprit: **Threads**
+
+When using Spring Boot (or any Java-based backend):
+- Each incoming HTTP request is handled by a **thread**.
+- Threads wait until they receive a response from downstream services.
+
+So if one service (like Movie Info) is slow:
+- Threads handling that request get **blocked**.
+- The **thread pool gets exhausted**, even for unrelated API calls.
+
+> 🔄 This leads to system-wide slowness or even complete unresponsiveness.
+
+---
+
+## 🔍 Misleading Assumptions
+
+- ❌ “Only calls depending on the slow service will be affected”
+- ✅ Reality: **Any part of the system** might suffer if thread starvation occurs
+
+---
+
+## 🧵 Quick Primer: Why Threads Matter
+
+In Java web servers:
+- There’s a limited pool of threads (e.g., 200)
+- Each request consumes 1 thread
+- If a downstream service is slow, threads stay busy waiting
+- Soon... **no threads are left** to handle new requests!
+
+---
+
+## 🧠 Key Takeaway
+
+> “A slow service can be as dangerous as a failed one.”
+
+Even one sluggish microservice can bring the entire application to its knees.
+
+---
