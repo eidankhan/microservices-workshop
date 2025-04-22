@@ -19,15 +19,7 @@ public class MovieCatalogResource {
     private WebClient.Builder webClientBuilder;
     @GetMapping("/{userId}")
     public List<CatalogItem> getItems(@PathVariable("userId") String userId){
-        // Get Ratings (hardcoding ratings data for now)
-//        List<Rating> ratings = Arrays.asList(
-//                new Rating(123L, 4.5),
-//                new Rating(456L, 3.8),
-//                new Rating(789L, 4.2)
-//        );
-
         UserRating userRatings = restTemplate.getForObject("http://rating-info-service/ratings/users/" + userId, UserRating.class);
-
         // Get Movies using the RestTemplate
         return userRatings.getRatings().stream().map(rating -> {
             // Calling Eureka instances instead of hardcoded URLs
