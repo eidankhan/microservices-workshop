@@ -546,3 +546,71 @@ You should:
 - Set a **timeout** on the `RestTemplate`.
 - If the API call exceeds the time, it returns an error.
 - Your app can **fail fast** and move on.
+
+> # ⚠️ We Haven’t Solved It Yet
+---
+
+## 💡 Recap: Timeouts Help, But Don’t Fully Solve It
+
+In the last lesson, we introduced **timeouts** as a way to prevent slow microservices from holding up threads forever.
+
+But here’s the catch...
+
+> “Timeouts only kick in **after** the thread has already been used.”
+
+---
+
+## 🧵 Threads Are Still Occupied
+
+- Even with a **3-second timeout**, the **thread is busy for 3 seconds**.
+- During this time, it's **not available** for other requests.
+
+So yes, it prevents **indefinite blocking**, but threads are still:
+- **Occupied temporarily**
+- **Not freed until timeout expires**
+
+---
+
+## 📈 The Real Problem: High Request Rate
+
+> “What if requests are coming in faster than threads are being released?”
+
+For example:
+- Timeout: **3 seconds**
+- Request rate: **1 request/second**
+- In 3 seconds, we get **3 new requests**
+- Only **1 thread gets freed** every 3 seconds
+
+🧨 **Eventually**, the server runs out of threads again.
+
+---
+
+## 🧠 Key Insight: Timeout ≠ Complete Solution
+
+Timeouts help only **if**:
+- Request rate is **less than** the thread-freeing rate
+- You have a **manageable number of slow services**
+
+If request volume increases:
+- You **hit thread limits** again
+- Server performance degrades
+- System still becomes unresponsive
+
+---
+
+## 🤔 Why Not Just Increase Threads?
+
+That’s a **band-aid**, not a fix.
+- More threads = more memory usage
+- Eventually, you’ll hit hardware limits
+- Doesn’t scale with user growth
+
+---
+
+## ✅ Conclusion: Timeouts are a **Half-Solution**
+
+Timeouts:
+✔️ Prevent infinite blocking  
+❌ Do **not** prevent server overload during high traffic
+
+---
