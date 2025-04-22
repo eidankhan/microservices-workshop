@@ -397,3 +397,77 @@ In Java web servers:
 Even one sluggish microservice can bring the entire application to its knees.
 
 ---
+
+> # 🧵 The Problem with Threads in Spring Boot Microservices
+---
+
+## 🧠 How Web Servers Handle Requests
+
+When a **request** hits a **web server** (e.g., Tomcat):
+- The server **creates a thread** to handle it.
+- The thread processes the request, sends a response, and is then **freed**.
+
+### ✅ All Good When...
+- Requests come in slowly.
+- Each thread finishes quickly.
+- Threads are reused efficiently.
+
+---
+
+## ❌ The Trouble Begins When...
+
+> **What if threads don’t free up fast enough?**
+
+As slow responses stack up:
+- More **threads are created**, waiting for their turn.
+- The server eventually hits the **max thread pool limit**.
+- **New requests are blocked**, even if they’re for fast services.
+
+---
+
+## 🖼️ Visual Recap: When Things Slow Down
+
+![Alt Text](/images/problem-with-threads.png)
+
+In this diagram:
+- Requests come into a web server.
+- Threads are created for each request.
+- Some threads are **stuck** waiting for **Service B**, which is **slow**.
+- Even fast requests for **Service A** are now stuck waiting for threads.
+
+---
+
+## 🎯 Microservices Scenario Breakdown
+
+Let’s say:
+- The **Movie Catalog Service** calls:
+  - 🐢 **Movie Info Service** (slow)
+  - ⚡ **Rating Data Service** (fast)
+
+At first:
+- Threads calling Rating Data Service = **fine**.
+- Threads calling Movie Info Service = **waiting**.
+
+Eventually:
+- Threads pile up waiting for slow Movie Info Service.
+- **Thread pool fills up**.
+- Even **new calls to Rating Data Service** are **blocked**, despite being fast.
+
+---
+
+## 🔥 The Key Issue
+
+> A **slow downstream service** can **starve** the entire thread pool  
+> → leading to slowness even in **unrelated parts** of the system.
+
+This is especially problematic in synchronous communication (like REST).
+
+---
+
+## 🧠 Takeaway
+
+- Web servers have **limited threads**.
+- **Slow services hog threads**, preventing faster services from serving requests.
+- This leads to a **system-wide slowdown**, even when only one service is slow.
+
+---
