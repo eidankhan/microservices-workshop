@@ -218,3 +218,103 @@ Or we have some way of handling failures, so that there's no perceived impact at
 > So, very similar concepts but slight differences. `You can technically have a system that's very fault tolerant but it's not resilient
 > but its hard because most of the time these two go to gather and it's good to focus on the both.`
 
+> # Full API Architecture
+> So, here's the full API Architecture so far. We have three services again but `MovieInfoService` is calling an external API, `MovieDB API`.
+A slight addition we added to microservices but nothing big, nothing significant; very simple stuff.
+
+![Alt text](images/full-api-architecure.png)
+
+### 🔁 Making Microservices Resilient
+---
+
+## 🤔 The Big Question
+
+> “What can we do to make this resilient?”
+
+Right now, we’re dealing with the **least fault-tolerant microservices setup** imaginable:
+- No error handling
+- No retry logic
+- No service duplication
+- One instance per service
+- No `try-catch`, no recovery logic
+
+In short:  
+**If any service fails, the whole system crashes.**
+
+---
+
+## 📉 Example Breakdown
+
+Let’s look at the **Movie Catalog Service**:
+- It fetches data from `Movie Info Service`
+- Then it fetches data from `Rating Service`
+- It compiles both into a response
+
+🔗 If **either of those two services** goes down,  
+📉 **Movie Catalog fails** — and so does the user request.
+
+---
+
+## 🧱 This Is NOT Resilient
+
+And that’s *actually great news* — because this is the perfect foundation for learning resilience.
+
+> To make something fault-tolerant, you must first understand what makes it fragile.
+
+---
+
+## 💥 What Can Go Wrong in Microservices?
+
+Here’s a real-world scenario:
+
+### ❌ One Instance Goes Down
+- Services are running as single instances.
+- If one instance fails, **boom 💥 — the entire flow breaks**.
+
+So… how do we avoid this?
+
+---
+
+## 🛠️ First Real Fix: **Redundancy**
+
+### ✅ Run Multiple Instances
+- Deploy more than one instance of each microservice.
+- Distribute them across:
+  - Different machines (best for production)
+  - Or different ports on the same machine (okay for dev/testing)
+
+![Alt text](images/one-instance-goes-down.png)
+
+---
+
+## 🔄 Load Balancing + Service Discovery
+
+Thanks to **Eureka** (our service registry), things get smoother:
+
+1. Each service instance registers itself to Eureka
+2. Eureka tracks **all active instances**
+3. Clients (like Movie Catalog) use **client-side load balancing** (via Ribbon)
+4. Ribbon does a **round-robin**:
+  - If there are 2 instances, it alternates calls between them
+
+So if one instance fails, traffic automatically shifts to the next available one — no manual intervention needed (most of the time 😉).
+
+---
+
+## 📈 Benefits of This Setup
+
+- ✅ **High Availability**: Traffic reroutes automatically
+- ✅ **Fault Isolation**: Failure in one instance doesn’t bring everything down
+- ✅ **Better Scalability**: Load gets evenly distributed
+- ✅ **Graceful Degradation**: Some services still function even when others are down
+
+---
+
+## 🧠 Key Insight
+
+> “You don’t want your entire app to go down just because one instance fails.”
+
+This is a **basic**, yet powerful step in making your microservices **resilient and production-ready**.
+
+---
+

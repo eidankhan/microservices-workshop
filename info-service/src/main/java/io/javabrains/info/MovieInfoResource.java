@@ -22,10 +22,7 @@ public class MovieInfoResource {
     @GetMapping("/{movieId}")
     public Movie getMovieInfo(@PathVariable String movieId) {
         // Simulate fetching movie data from a TMDB database
-        // MovieSummary movieSummary = restTemplate.getForObject("https://api.themoviedb.org/3/movie/" + movieId + "?api_key=" + apiKey, MovieSummary.class);
-        MovieSummary movieSummary = restTemplate.getForObject("https://api.themoviedb.org/3/movie/"+movieId+"?api_key=4d05983b5c6fe6a533f9daf446c6f273", MovieSummary.class);
-
-
+        MovieSummary movieSummary = restTemplate.getForObject("https://api.themoviedb.org/3/movie/" + movieId + "?api_key=" + apiKey, MovieSummary.class);
         return new Movie(movieSummary.getId(), movieSummary.getTitle());
     }
 }
