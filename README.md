@@ -614,3 +614,105 @@ Timeouts:
 ❌ Do **not** prevent server overload during high traffic
 
 ---
+> # Understanding Circuit Breaker Pattern in Microservices
+---
+
+## 1. What is a Circuit Breaker?
+
+In a microservices architecture, many small services communicate with each other. Sometimes, one service might become slow or fail. Without protection, your app can get stuck waiting, causing slowdowns or cascading failures.
+
+**Circuit Breaker** is a design pattern inspired by electrical circuit breakers. It detects when a service is failing repeatedly and "opens" the circuit to stop sending requests to that service temporarily. This helps keep your system responsive and resilient.
+
+---
+
+## 2. Why Use a Circuit Breaker?
+
+- Prevents wasting resources on calls to a failing service.
+- Avoids cascading failures — stops failure spreading through the system.
+- Improves system stability and user experience by quickly failing fast or using fallbacks.
+- Helps detect service health and recover gracefully.
+
+---
+
+## 3. How Does a Circuit Breaker Work?
+
+- **Closed state:** Requests flow normally.
+- **Open state:** Requests are blocked immediately; fallback logic is used instead.
+- **Half-open state:** After a wait time, some requests are allowed to test if service recovered.
+
+---
+
+## 4. Key Circuit Breaker Parameters
+
+These parameters help decide **when** to open or close the circuit:
+
+| Parameter                      | What it means                                  | Example                             |
+|-------------------------------|-----------------------------------------------|-----------------------------------|
+| **Number of recent requests (N)** | How many recent requests to monitor          | Last 5 requests                   |
+| **Failure threshold**          | How many failures out of N trips to open circuit | 3 out of last 5 requests fail    |
+| **Timeout for requests**       | How long to wait before marking a request as failed | 2 seconds                       |
+| **Wait duration before retry** | How long to wait before trying the service again | 10 seconds                      |
+
+---
+
+## 5. When Does the Circuit Break?
+
+- After a certain number or percentage of requests fail within the recent N requests.
+- Failures include timeouts or errors.
+- Once tripped, the circuit opens, blocking further calls to the failing service for the configured wait duration.
+
+---
+
+## 6. What To Do When The Circuit Breaks?
+
+Requests keep coming in, but you no longer want to call the failing service. How do you respond?
+
+### Fallback Strategies
+
+1. **Throw an error (least preferred)**
+  - You immediately respond with an error, telling the caller the service is unavailable.
+  - Not ideal — breaks the user experience.
+
+2. **Return a default or hardcoded response**
+  - Return a pre-defined “safe” response that the client can handle.
+  - Better than error, but response may be stale or incomplete.
+
+3. **Return cached data (best practice)**
+  - Use previously saved data to respond.
+  - The data might not be fully up-to-date but keeps the system usable and responsive.
+  - The user might not even realize the service behind the scenes is down.
+
+---
+
+## 7. Simple, Human Explanation with Real-World Analogy
+
+Imagine your favorite pizza shop (Movie Catalog service) relies on a specific cheese supplier (Movie Info service).
+
+- One day, the supplier is late (service is slow).
+- Your pizza shop says, **“No more calls to the supplier for now”** (circuit breaks).
+- But customers still want pizza, so you:
+  - Either say, **“Sorry, no pizza today”** (throw error),
+  - Or offer a **standard cheese pizza** (default response),
+  - Or use **cheese from your fridge leftovers** (cached data).
+
+---
+
+## Tips & Gotchas
+
+- Don't make your circuit breaker too sensitive — it can trip on temporary glitches.
+- Don’t keep it too tolerant — slow failures waste resources.
+- Always provide fallback methods for graceful degradation.
+- Clearly indicate fallback responses if possible, so clients can handle them intelligently.
+- Cache stale data carefully — know the trade-off between freshness and availability.
+
+---
+
+## Summary
+
+| Concept          | Explanation                          |
+|------------------|------------------------------------|
+| Circuit Breaker  | Stops calls to failing service     |
+| Parameters       | Decide when to trip and reset circuit |
+| Fallback         | Alternative logic when circuit is open |
+| Best Fallback    | Use cached data for smoother UX    |
+
